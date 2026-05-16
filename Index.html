@@ -1,285 +1,704 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Calculadora de IMC</title>
-    <style>
-        :root {
-            --primary: #1976d2;
-            --primary-dark: #1565c0;
-            --background: #f4f4f4;
-            --container-bg: #fff;
-            --text: #222;
-            --border: #ccc;
-        }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: var(--background);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            transition: background 0.3s, color 0.3s;
-        }
-        .container {
-            background: var(--container-bg);
-            padding: 32px 36px 24px 36px;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
-            min-width: 340px;
-            margin-top: 48px;
-            margin-bottom: 32px;
-            transition: background 0.3s, color 0.3s;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 18px;
-            letter-spacing: 1px;
-        }
-        label {
-            display: block;
-            margin-top: 16px;
-            font-weight: 500;
-        }
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid var(--border);
-            border-radius: 5px;
-            font-size: 16px;
-            background: #fafafa;
-            transition: border 0.2s;
-        }
-        input[type="number"]:focus {
-            border: 1.5px solid var(--primary);
-            outline: none;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 22px;
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background: var(--primary-dark);
-        }
-        .resultado {
-            margin-top: 22px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: 500;
-            min-height: 28px;
-        }
-        .tabela-imc {
-            width: 100%;
-            max-width: 480px;
-            border-collapse: collapse;
-            margin: 0 auto 32px auto;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .tabela-imc th, .tabela-imc td {
-            padding: 12px 10px;
-            text-align: center;
-        }
-        .tabela-imc th {
-            background: var(--primary);
-            color: #fff;
-            font-size: 16px;
-        }
-        .tabela-imc tr {
-            transition: background 0.2s;
-        }
-        .imc-abaixo { background: #b3e5fc; color: #01579b; }
-        .imc-normal { background: #c8e6c9; color: #256029; }
-        .imc-sobrepeso { background: #fff9c4; color: #b59f00; }
-        .imc-obesidade1 { background: #ffe0b2; color: #e65100; }
-        .imc-obesidade2 { background: #ffccbc; color: #bf360c; }
-        .imc-obesidade3 { background: #ffcdd2; color: #b71c1c; }
-        .modo-escuro {
-            --primary: #90caf9;
-            --primary-dark: #1976d2;
-            --background: #181c24;
-            --container-bg: #232a36;
-            --text: #f4f4f4;
-            --border: #444;
-        }
-        .modo-escuro .tabela-imc th {
-            background: #1976d2;
-            color: #fff;
-        }
-        .modo-escuro input[type="number"] {
-            background: #232a36;
-            color: #f4f4f4;
-        }
-        .modo-escuro .tabela-imc td {
-            color: inherit;
-        }
-        .toggle-modo {
-            position: absolute;
-            top: 24px;
-            right: 32px;
-            background: none;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-            padding: 7px 18px;
-            border-radius: 20px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s, border 0.2s;
-        }
-        .toggle-modo:hover {
-            background: var(--primary);
-            color: #fff;
-        }
-        @media (max-width: 600px) {
-            .container {
-                min-width: unset;
-                width: 96vw;
-                padding: 18px 6vw 18px 6vw;
-            }
-            .tabela-imc {
-                font-size: 13px;
-            }
-            .toggle-modo {
-                right: 10px;
-                top: 10px;
-                padding: 6px 10px;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora de IMC</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --card: rgba(255,255,255,.06);
+      --card-2: rgba(255,255,255,.09);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.7);
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --ring: rgba(124, 92, 255, .35);
+      --btn: linear-gradient(135deg, #7c5cff, #28d7ff);
+      --btnText: #07101f;
+
+      --good: #26c281;
+      --warn: #ffcc00;
+      --bad: #ff5c7a;
+      --light: #7bbcff;
+      --danger: #ff3b30;
+
+      --radius: 18px;
+    }
+
+    [data-theme="light"]{
+      --bg: #f6f7fb;
+      --card: rgba(15, 23, 42, .05);
+      --card-2: rgba(15, 23, 42, .08);
+      --text: rgba(15, 23, 42, .92);
+      --muted: rgba(15, 23, 42, .65);
+      --border: rgba(15, 23, 42, .12);
+      --shadow: 0 18px 50px rgba(10, 20, 40, .14);
+      --ring: rgba(124, 92, 255, .25);
+      --btn: linear-gradient(135deg, #5b7cfa, #18c7ff);
+      --btnText: #061023;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1100px 600px at 20% -10%, rgba(124, 92, 255, .45), transparent 60%),
+                  radial-gradient(900px 520px at 90% 0%, rgba(40, 215, 255, .35), transparent 55%),
+                  radial-gradient(1200px 700px at 50% 120%, rgba(38, 194, 129, .16), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 16px;
+    }
+
+    .wrap{
+      width: min(1000px, 100%);
+      display:grid;
+      gap: 18px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 16px;
+      padding: 6px 2px;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(22px, 3.4vw, 34px);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.35;
+      font-size: 14px;
+      max-width: 62ch;
+    }
+
+    .theme-toggle{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      user-select:none;
+    }
+
+    .toggle-btn{
+      position: relative;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .toggle-btn:active{ transform: scale(.98); }
+    .toggle-btn:hover{ border-color: rgba(124,92,255,.35); }
+
+    .icon{
+      width: 22px;
+      height: 22px;
+      display:grid;
+      place-items:center;
+      border-radius: 8px;
+      background: var(--card-2);
+      border: 1px solid var(--border);
+    }
+
+    .toggle-label{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ align-items:flex-start; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-inner{
+      padding: 18px;
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px){
+      .form-row{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .input{
+      width:100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 12px 12px;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+      font-size: 15px;
+    }
+
+    [data-theme="light"] .input{
+      background: rgba(255,255,255,.7);
+    }
+
+    .input:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .actions{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .btn{
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor:pointer;
+      color: var(--btnText);
+      background: var(--btn);
+      font-weight: 800;
+      letter-spacing: .01em;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      transition: transform .12s ease, filter .2s ease;
+      min-width: 190px;
+      justify-content:center;
+    }
+
+    .btn:hover{ filter: brightness(1.05); }
+    .btn:active{ transform: scale(.99); }
+
+    .btn-ghost{
+      background: transparent;
+      color: var(--text);
+      border: 1px dashed rgba(255,255,255,.18);
+      min-width: 150px;
+      justify-content:center;
+    }
+
+    .helper{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      margin: 10px 0 0;
+    }
+
+    .result{
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      width: fit-content;
+    }
+
+    .dot{
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--good);
+      box-shadow: 0 0 0 4px rgba(38,194,129,.18);
+    }
+
+    .pill span{
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .score{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .score h2{
+      margin:0;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .score .value{
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .range{
+      display:flex;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .range b{ color: var(--text); }
+
+    .table-card .card-inner{ padding-top: 10px; }
+
+    table{
+      width:100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      overflow:hidden;
+      border-radius: 14px;
+    }
+
+    th, td{
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    [data-theme="light"] th, [data-theme="light"] td{
+      border-bottom: 1px solid rgba(15, 23, 42, .08);
+    }
+
+    th{
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12.5px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.02);
+    }
+
+    tr:last-child td{ border-bottom:none; }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .swatch{
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #aaa;
+      box-shadow: 0 0 0 4px rgba(0,0,0,.12);
+    }
+
+    .highlight-row td{
+      background: rgba(124,92,255,.13);
+    }
+
+    .footer-note{
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.35;
+      padding: 0 18px 16px;
+    }
+
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border-width:0;
+    }
+  </style>
 </head>
 <body>
-    <button class="toggle-modo" id="toggleModo">Modo Escuro</button>
-    <div class="container">
-        <h2>Calculadora de IMC</h2>
-        <form id="formIMC" autocomplete="off">
-            <label for="peso">Peso (kg):</label>
-            <input type="number" id="peso" step="0.1" min="0" required>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>Calculadora de IMC</h1>
+        <p class="subtitle">Informe sua <b>altura</b> e <b>peso</b> para descobrir o seu índice de massa corporal e a faixa correspondente.</p>
+      </div>
 
-            <label for="altura">Altura (m):</label>
-            <input type="number" id="altura" step="0.01" min="0" required>
+      <div class="theme-toggle">
+        <button class="toggle-btn" id="themeBtn" type="button" aria-label="Alternar tema">
+          <span class="icon" id="themeIcon">🌙</span>
+          <span class="toggle-label" id="themeText">Modo escuro</span>
+        </button>
+      </div>
+    </header>
 
-            <button type="submit">Calcular IMC</button>
-        </form>
-        <div class="resultado" id="resultado"></div>
-    </div>
-    <table class="tabela-imc">
-        <thead>
+    <section class="grid">
+      <div class="card">
+        <div class="card-inner">
+          <form id="bmiForm" autocomplete="off">
+            <div class="form-row">
+              <div>
+                <label for="height">
+                  <span>Altura (m)</span>
+                  <span aria-hidden="true">📏</span>
+                </label>
+                <input
+                  class="input"
+                  id="height"
+                  name="height"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.01"
+                  min="0"
+                  placeholder="Ex: 1.75"
+                  required
+                />
+              </div>
+
+              <div>
+                <label for="weight">
+                  <span>Peso (kg)</span>
+                  <span aria-hidden="true">⚖️</span>
+                </label>
+                <input
+                  class="input"
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  inputmode="decimal"
+                  step="0.1"
+                  min="0"
+                  placeholder="Ex: 72.5"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn" type="submit">✨ Calcular IMC</button>
+              <button class="btn btn-ghost" type="button" id="clearBtn">Limpar</button>
+            </div>
+
+            <p class="helper">IMC = <b>peso</b> / (<b>altura</b> × <b>altura</b>). Valores inválidos serão ignorados.</p>
+          </form>
+        </div>
+      </div>
+
+      <aside class="card">
+        <div class="result">
+          <div class="pill" id="typePill">
+            <span class="dot" id="typeDot" aria-hidden="true"></span>
+            <span id="typeName">—</span>
+          </div>
+
+          <div class="score">
+            <h2>Seu IMC</h2>
+            <div class="value" id="bmiValue">—</div>
+          </div>
+
+          <div class="range" id="rangeInfo">
+            <div>Faixa: <b>—</b></div>
+            <div>Classificação: <b>—</b></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="card table-card">
+      <div class="card-inner">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+          <div>
+            <h2 style="margin:0; font-size:18px; letter-spacing:-.01em;">Tabela do IMC</h2>
+            <p class="subtitle" style="margin-top:6px; max-width: 70ch;">Cada linha tem uma cor para ajudar na identificação rápida da classificação.</p>
+          </div>
+          <div class="pill" style="margin:0;">
+            <span class="dot" id="legendDot" style="background: var(--good); box-shadow: 0 0 0 4px rgba(38,194,129,.18);"></span>
+            <span>Legenda</span>
+          </div>
+        </div>
+
+        <table aria-label="Tabela de classificação do IMC">
+          <thead>
             <tr>
-                <th>IMC</th>
-                <th>Classificação</th>
-                <th>Cor</th>
+              <th style="width: 36%;">Tipo</th>
+              <th style="width: 27%;">IMC (kg/m²)</th>
+              <th style="width: 37%;">Descrição</th>
             </tr>
-        </thead>
-        <tbody>
-            <tr class="imc-abaixo">
-                <td>Menor que 18,5</td>
-                <td>Abaixo do peso</td>
-                <td>Azul claro</td>
-            </tr>
-            <tr class="imc-normal">
-                <td>18,5 - 24,9</td>
-                <td>Peso normal</td>
-                <td>Verde claro</td>
-            </tr>
-            <tr class="imc-sobrepeso">
-                <td>25 - 29,9</td>
-                <td>Sobrepeso</td>
-                <td>Amarelo claro</td>
-            </tr>
-            <tr class="imc-obesidade1">
-                <td>30 - 34,9</td>
-                <td>Obesidade grau I</td>
-                <td>Laranja claro</td>
-            </tr>
-            <tr class="imc-obesidade2">
-                <td>35 - 39,9</td>
-                <td>Obesidade grau II</td>
-                <td>Laranja escuro</td>
-            </tr>
-            <tr class="imc-obesidade3">
-                <td>40 ou mais</td>
-                <td>Obesidade grau III</td>
-                <td>Vermelho claro</td>
-            </tr>
-        </tbody>
-    </table>
-    <script>
-        function getClassByIMC(imc) {
-            if (imc < 18.5) return 'imc-abaixo';
-            if (imc < 25) return 'imc-normal';
-            if (imc < 30) return 'imc-sobrepeso';
-            if (imc < 35) return 'imc-obesidade1';
-            if (imc < 40) return 'imc-obesidade2';
-            return 'imc-obesidade3';
-        }
+          </thead>
+          <tbody id="bmiTableBody"></tbody>
+        </table>
+      </div>
+      <div class="footer-note">
+        <b>Observação:</b> IMC é um indicador geral e não substitui avaliação profissional.
+      </div>
+    </section>
+  </div>
 
-        document.getElementById('formIMC').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const peso = parseFloat(document.getElementById('peso').value);
-            const altura = parseFloat(document.getElementById('altura').value);
-            const resultado = document.getElementById('resultado');
+  <script>
+    const THEMES = { dark: 'dark', light: 'light' };
 
-            if (isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
-                resultado.textContent = 'Por favor, preencha os campos corretamente.';
-                resultado.style.color = 'red';
-                resultado.className = 'resultado';
-                return;
-            }
+    const classifications = [
+      {
+        key: 'underweight',
+        name: 'Abaixo do peso',
+        min: 0,
+        max: 18.5,
+        color: '#7bbcff',
+        shadow: 'rgba(123,188,255,.25)',
+        description: 'IMC menor que 18,5 indica abaixo do peso.'
+      },
+      {
+        key: 'normal',
+        name: 'Peso normal',
+        min: 18.5,
+        max: 24.9,
+        color: '#26c281',
+        shadow: 'rgba(38,194,129,.22)',
+        description: 'IMC entre 18,5 e 24,9 é considerado normal.'
+      },
+      {
+        key: 'overweight',
+        name: 'Sobrepeso',
+        min: 25,
+        max: 29.9,
+        color: '#ffcc00',
+        shadow: 'rgba(255,204,0,.22)',
+        description: 'IMC entre 25 e 29,9 indica sobrepeso.'
+      },
+      {
+        key: 'obesity1',
+        name: 'Obesidade (Grau I)',
+        min: 30,
+        max: 34.9,
+        color: '#ff8a3d',
+        shadow: 'rgba(255,138,61,.22)',
+        description: 'IMC entre 30 e 34,9 indica obesidade grau I.'
+      },
+      {
+        key: 'obesity2',
+        name: 'Obesidade (Grau II)',
+        min: 35,
+        max: 39.9,
+        color: '#ff5c7a',
+        shadow: 'rgba(255,92,122,.22)',
+        description: 'IMC entre 35 e 39,9 indica obesidade grau II.'
+      },
+      {
+        key: 'obesity3',
+        name: 'Obesidade (Grau III)',
+        min: 40,
+        max: Infinity,
+        color: '#b23cff',
+        shadow: 'rgba(178,60,255,.22)',
+        description: 'IMC igual ou maior que 40 indica obesidade grau III.'
+      }
+    ];
 
-            const imc = peso / (altura * altura);
-            let classificacao = '';
-            let classe = '';
+    const heightEl = document.getElementById('height');
+    const weightEl = document.getElementById('weight');
+    const formEl = document.getElementById('bmiForm');
+    const clearBtn = document.getElementById('clearBtn');
 
-            if (imc < 18.5) {
-                classificacao = 'Abaixo do peso';
-                classe = 'imc-abaixo';
-            } else if (imc < 25) {
-                classificacao = 'Peso normal';
-                classe = 'imc-normal';
-            } else if (imc < 30) {
-                classificacao = 'Sobrepeso';
-                classe = 'imc-sobrepeso';
-            } else if (imc < 35) {
-                classificacao = 'Obesidade grau I';
-                classe = 'imc-obesidade1';
-            } else if (imc < 40) {
-                classificacao = 'Obesidade grau II';
-                classe = 'imc-obesidade2';
-            } else {
-                classificacao = 'Obesidade grau III';
-                classe = 'imc-obesidade3';
-            }
+    const bmiValueEl = document.getElementById('bmiValue');
+    const typeNameEl = document.getElementById('typeName');
+    const typeDotEl = document.getElementById('typeDot');
+    const rangeInfoEl = document.getElementById('rangeInfo');
 
-            resultado.textContent = `Seu IMC é ${imc.toFixed(2)} (${classificacao})`;
-            resultado.className = `resultado ${classe}`;
-            resultado.style.color = '';
-        });
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
 
-        // Modo escuro/claro
-        const btnModo = document.getElementById('toggleModo');
-        btnModo.addEventListener('click', function() {
-            document.body.classList.toggle('modo-escuro');
-            if(document.body.classList.contains('modo-escuro')) {
-                btnModo.textContent = 'Modo Claro';
-            } else {
-                btnModo.textContent = 'Modo Escuro';
-            }
-        });
-    </script>
+    const tableBody = document.getElementById('bmiTableBody');
+
+    function formatRange(item){
+      const a = item.min;
+      const b = item.max;
+      if (b === Infinity) return `${a.toFixed(0)}+`;
+      if (a === 0) return `< ${b.toFixed(1)}`;
+      return `${a.toFixed(1)} - ${b.toFixed(1)}`;
+    }
+
+    function getClassification(bmi){
+      return classifications.find(c => bmi >= c.min && bmi < c.max) || null;
+    }
+
+    function renderTable(){
+      tableBody.innerHTML = '';
+      for (const item of classifications){
+        const tr = document.createElement('tr');
+        tr.dataset.type = item.key;
+
+        const tdType = document.createElement('td');
+        tdType.innerHTML = `
+          <span class="badge">
+            <span class="swatch" style="background:${item.color}; box-shadow: 0 0 0 4px ${item.shadow};"></span>
+            ${item.name}
+          </span>`;
+
+        const tdRange = document.createElement('td');
+        tdRange.textContent = formatRange(item);
+
+        const tdDesc = document.createElement('td');
+        tdDesc.textContent = item.description;
+
+        tr.appendChild(tdType);
+        tr.appendChild(tdRange);
+        tr.appendChild(tdDesc);
+        tableBody.appendChild(tr);
+      }
+    }
+
+    function setTheme(theme){
+      document.documentElement.setAttribute('data-theme', theme);
+      const isLight = theme === THEMES.light;
+      themeIcon.textContent = isLight ? '☀️' : '🌙';
+      themeText.textContent = isLight ? 'Modo claro' : 'Modo escuro';
+      localStorage.setItem('theme', theme);
+    }
+
+    function toggleTheme(){
+      const current = document.documentElement.getAttribute('data-theme') || THEMES.dark;
+      setTheme(current === THEMES.dark ? THEMES.light : THEMES.dark);
+    }
+
+    function clearResult(){
+      bmiValueEl.textContent = '—';
+      typeNameEl.textContent = '—';
+      typeDotEl.style.background = 'var(--good)';
+      typeDotEl.style.boxShadow = '0 0 0 4px rgba(38,194,129,.18)';
+      rangeInfoEl.innerHTML = `
+        <div>Faixa: <b>—</b></div>
+        <div>Classificação: <b>—</b></div>
+      `;
+      for (const tr of tableBody.querySelectorAll('tr')){
+        tr.classList.remove('highlight-row');
+      }
+    }
+
+    function updateResult(bmi){
+      const item = getClassification(bmi);
+      if (!item) return;
+
+      const rounded = Math.round(bmi * 10) / 10;
+      bmiValueEl.textContent = rounded.toString().replace('.', ',');
+      typeNameEl.textContent = item.name;
+
+      typeDotEl.style.background = item.color;
+      typeDotEl.style.boxShadow = `0 0 0 4px ${item.shadow}`;
+
+      rangeInfoEl.innerHTML = `
+        <div>Faixa: <b>${formatRange(item).replace('+', '+')}</b></div>
+        <div>Classificação: <b>${item.key.replace(/\d/g,' $&').replace(/obesity\s*/i,'Obesidade ').trim()}</b></div>
+      `;
+
+      for (const tr of tableBody.querySelectorAll('tr')){
+        tr.classList.toggle('highlight-row', tr.dataset.type === item.key);
+      }
+    }
+
+    function computeBMI(height, weight){
+      // height in meters, weight in kg
+      if (!Number.isFinite(height) || !Number.isFinite(weight)) return null;
+      if (height <= 0 || weight <= 0) return null;
+      const bmi = weight / (height * height);
+      return Number.isFinite(bmi) ? bmi : null;
+    }
+
+    formEl.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const height = parseFloat(heightEl.value.replace(',', '.'));
+      const weight = parseFloat(weightEl.value.replace(',', '.'));
+      const bmi = computeBMI(height, weight);
+
+      if (bmi === null){
+        clearResult();
+        return;
+      }
+      updateResult(bmi);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      heightEl.value = '';
+      weightEl.value = '';
+      clearResult();
+      heightEl.focus();
+    });
+
+    themeBtn.addEventListener('click', toggleTheme);
+
+    // Init
+    renderTable();
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+    const initial = savedTheme ? savedTheme : (prefersLight ? THEMES.light : THEMES.dark);
+    setTheme(initial);
+
+    clearResult();
+  </script>
 </body>
 </html>
+
