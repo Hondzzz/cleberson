@@ -4,701 +4,1341 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculadora de IMC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg: #0b1220;
-      --card: rgba(255,255,255,.06);
-      --card-2: rgba(255,255,255,.09);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.7);
-      --border: rgba(255,255,255,.12);
-      --shadow: 0 18px 50px rgba(0,0,0,.35);
-      --ring: rgba(124, 92, 255, .35);
-      --btn: linear-gradient(135deg, #7c5cff, #28d7ff);
-      --btnText: #07101f;
+    :root {
+      --bg: #0e0f14;
+      --surface: #15161d;
+      --surface2: #1c1d27;
+      --surface3: #222433;
+      --border: rgba(255,255,255,.07);
+      --border2: rgba(255,255,255,.13);
+      --text: #f0f0f5;
+      --muted: rgba(240,240,245,.45);
+      --muted2: rgba(240,240,245,.65);
+      --accent: #6c6eff;
+      --accent2: #a78bfa;
+      --accent-glow: rgba(108,110,255,.18);
 
-      --good: #26c281;
-      --warn: #ffcc00;
-      --bad: #ff5c7a;
-      --light: #7bbcff;
-      --danger: #ff3b30;
+      --c-blue: #4f8ef7;
+      --c-green: #2ec790;
+      --c-yellow: #f5c147;
+      --c-orange: #f47a3a;
+      --c-red: #f05268;
+      --c-purple: #b060f7;
 
-      --radius: 18px;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+
+      --font: 'DM Sans', system-ui, sans-serif;
+      --mono: 'DM Mono', monospace;
     }
 
-    [data-theme="light"]{
-      --bg: #f6f7fb;
-      --card: rgba(15, 23, 42, .05);
-      --card-2: rgba(15, 23, 42, .08);
-      --text: rgba(15, 23, 42, .92);
-      --muted: rgba(15, 23, 42, .65);
-      --border: rgba(15, 23, 42, .12);
-      --shadow: 0 18px 50px rgba(10, 20, 40, .14);
-      --ring: rgba(124, 92, 255, .25);
-      --btn: linear-gradient(135deg, #5b7cfa, #18c7ff);
-      --btnText: #061023;
+    [data-theme="light"] {
+      --bg: #f4f4f8;
+      --surface: #ffffff;
+      --surface2: #f8f8fc;
+      --surface3: #eeeef5;
+      --border: rgba(0,0,0,.07);
+      --border2: rgba(0,0,0,.12);
+      --text: #111118;
+      --muted: rgba(17,17,24,.4);
+      --muted2: rgba(17,17,24,.6);
+      --accent: #4c4ef0;
+      --accent2: #7c5dfa;
+      --accent-glow: rgba(76,78,240,.12);
     }
 
-    *{ box-sizing: border-box; }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1100px 600px at 20% -10%, rgba(124, 92, 255, .45), transparent 60%),
-                  radial-gradient(900px 520px at 90% 0%, rgba(40, 215, 255, .35), transparent 55%),
-                  radial-gradient(1200px 700px at 50% 120%, rgba(38, 194, 129, .16), transparent 60%),
-                  var(--bg);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 28px 16px;
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .wrap{
-      width: min(1000px, 100%);
-      display:grid;
-      gap: 18px;
+    .container {
+      width: min(960px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    header{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
+    /* HEADER */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0 12px;
       gap: 16px;
-      padding: 6px 2px;
     }
 
-    .title{
-      display:flex;
-      flex-direction:column;
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .brand-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .brand h1 {
+      font-size: clamp(22px, 3.6vw, 34px);
+      font-weight: 700;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      transition: background .15s, border-color .15s, transform .1s;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover { background: var(--surface3); border-color: var(--accent); }
+    .icon-btn:active { transform: scale(.95); }
+
+    .badge-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .relative { position: relative; }
+
+    /* MAIN GRID */
+    .grid-main {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 780px) { .grid-main { grid-template-columns: 1fr; } }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .card-body { padding: 22px; }
+
+    /* FORM */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    h1{
-      margin:0;
-      font-size: clamp(22px, 3.4vw, 34px);
-      letter-spacing: -0.02em;
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
     }
 
-    .subtitle{
-      margin:0;
-      color: var(--muted);
-      line-height: 1.35;
-      font-size: 14px;
-      max-width: 62ch;
-    }
-
-    .theme-toggle{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      user-select:none;
-    }
-
-    .toggle-btn{
-      position: relative;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12);
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      transition: transform .12s ease, background .2s ease, border-color .2s ease;
-    }
-
-    .toggle-btn:active{ transform: scale(.98); }
-    .toggle-btn:hover{ border-color: rgba(124,92,255,.35); }
-
-    .icon{
-      width: 22px;
-      height: 22px;
-      display:grid;
-      place-items:center;
-      border-radius: 8px;
-      background: var(--card-2);
-      border: 1px solid var(--border);
-    }
-
-    .toggle-label{
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1.05fr;
-      gap: 18px;
-    }
-
-    @media (max-width: 900px){
-      .grid{ grid-template-columns: 1fr; }
-      header{ align-items:flex-start; }
-    }
-
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-
-    .card-inner{
-      padding: 18px;
-    }
-
-    .form-row{
-      display:grid;
+    .form-grid {
+      display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+      margin-bottom: 10px;
     }
 
-    @media (max-width: 520px){
-      .form-row{ grid-template-columns: 1fr; }
+    @media (max-width: 400px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted2);
+      margin-bottom: 7px;
+      letter-spacing: .02em;
     }
 
-    label{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-unit {
+      position: absolute;
+      right: 12px;
+      font-size: 12px;
+      font-family: var(--mono);
       color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 8px;
+      pointer-events: none;
     }
 
-    .input{
-      width:100%;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 11px 38px 11px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: var(--surface2);
       color: var(--text);
-      padding: 12px 12px;
-      outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease;
+      font-family: var(--font);
       font-size: 15px;
+      font-weight: 400;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      -moz-appearance: textfield;
     }
 
-    [data-theme="light"] .input{
-      background: rgba(255,255,255,.7);
-    }
+    input::-webkit-inner-spin-button, input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+    input::placeholder { color: var(--muted); font-weight: 300; }
 
-    .input:focus{
-      border-color: rgba(124,92,255,.55);
-      box-shadow: 0 0 0 4px var(--ring);
-    }
+    .field-full { grid-column: 1 / -1; }
 
-    .actions{
-      display:flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-      align-items:center;
-      justify-content:space-between;
-    }
+    .name-field input { padding-right: 13px; }
 
-    .btn{
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 14px;
-      padding: 12px 14px;
-      cursor:pointer;
-      color: var(--btnText);
-      background: var(--btn);
-      font-weight: 800;
-      letter-spacing: .01em;
-      display:flex;
-      align-items:center;
+    /* BUTTONS ROW */
+    .btn-row {
+      display: flex;
       gap: 10px;
-      transition: transform .12s ease, filter .2s ease;
-      min-width: 190px;
-      justify-content:center;
+      margin-top: 18px;
+      align-items: center;
     }
 
-    .btn:hover{ filter: brightness(1.05); }
-    .btn:active{ transform: scale(.99); }
-
-    .btn-ghost{
-      background: transparent;
-      color: var(--text);
-      border: 1px dashed rgba(255,255,255,.18);
-      min-width: 150px;
-      justify-content:center;
-    }
-
-    .helper{
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-      margin: 10px 0 0;
-    }
-
-    .result{
-      padding: 18px;
-      display:flex;
-      flex-direction:column;
-      gap: 14px;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      width: fit-content;
-    }
-
-    .dot{
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      background: var(--good);
-      box-shadow: 0 0 0 4px rgba(38,194,129,.18);
-    }
-
-    .pill span{
-      font-weight: 800;
+    .btn-primary {
+      flex: 1;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font);
       font-size: 14px;
-    }
-
-    .score{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .score h2{
-      margin:0;
-      font-size: 14px;
-      color: var(--muted);
       font-weight: 700;
+      letter-spacing: .02em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: filter .15s, transform .1s;
     }
 
-    .score .value{
-      font-size: clamp(36px, 6vw, 56px);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1;
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:active { transform: scale(.98); }
+
+    .btn-ghost {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--muted2);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
     }
 
-    .range{
-      display:flex;
-      justify-content:space-between;
-      gap: 14px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      flex-wrap: wrap;
+    .btn-ghost:hover { background: var(--surface3); color: var(--text); }
+
+    /* RESULT CARD */
+    .result-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      height: 100%;
     }
 
-    .range b{ color: var(--text); }
-
-    .table-card .card-inner{ padding-top: 10px; }
-
-    table{
-      width:100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      overflow:hidden;
-      border-radius: 14px;
+    .result-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    th, td{
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      text-align:left;
-      vertical-align: middle;
-      font-size: 14px;
-    }
-
-    [data-theme="light"] th, [data-theme="light"] td{
-      border-bottom: 1px solid rgba(15, 23, 42, .08);
-    }
-
-    th{
-      color: var(--muted);
-      font-weight: 800;
-      font-size: 12.5px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      background: rgba(255,255,255,.02);
-    }
-
-    tr:last-child td{ border-bottom:none; }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      padding: 8px 10px;
+    .category-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px 6px 10px;
       border-radius: 999px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .3s ease;
+    }
+
+    .cat-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--c-green);
+      transition: background .3s;
+    }
+
+    .bmi-display {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bmi-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .bmi-value {
+      font-size: clamp(48px, 8vw, 68px);
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1;
+      transition: color .3s;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* GAUGE */
+    .gauge-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .gauge-svg { display: block; width: 100%; overflow: visible; }
+
+    .gauge-bar-bg {
+      display: flex;
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      gap: 2px;
+    }
+
+    .gauge-seg {
+      height: 100%;
+      border-radius: 999px;
+      transition: opacity .3s;
+    }
+
+    .gauge-pointer {
+      position: absolute;
+      top: -6px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--text);
+      border: 2px solid var(--bg);
+      transform: translateX(-50%);
+      transition: left .4s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    .gauge-labels span {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    .range-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .range-box {
+      background: var(--surface2);
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      font-weight: 900;
+      border-radius: var(--radius-sm);
+      padding: 10px 13px;
+    }
+
+    .range-box-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .range-box-val {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--mono);
+    }
+
+    /* TABLE */
+    .bmi-table-wrap {
+      overflow-x: auto;
+    }
+
+    .bmi-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    .bmi-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bmi-table tbody tr { transition: background .15s; }
+    .bmi-table tbody tr:hover { background: var(--surface2); }
+    .bmi-table tbody td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .bmi-table tbody tr:last-child td { border-bottom: none; }
+
+    .bmi-table tr.row-active td { background: var(--surface3) !important; }
+
+    .color-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .type-cell { display: flex; align-items: center; font-weight: 500; }
+
+    .imc-range {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--muted2);
+    }
+
+    /* USERS MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-lg);
+      width: min(760px, 100%);
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(12px) scale(.98);
+      transition: transform .2s;
+      overflow: hidden;
+    }
+
+    .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .users-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .user-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .15s;
+    }
+
+    .user-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      transition: background .3s;
+    }
+
+    .user-card:hover { border-color: var(--border2); }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface3);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted2);
+      flex-shrink: 0;
+    }
+
+    .user-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .user-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .user-stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .user-stat-val {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    .user-cat {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface3);
+    }
+
+    .user-date {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-family: var(--mono);
+    }
+
+    .user-delete {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      transition: background .15s, color .15s;
+      opacity: 0;
+    }
+
+    .user-card:hover .user-delete { opacity: 1; }
+    .user-delete:hover { background: rgba(240,82,104,.15); color: var(--c-red); }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .empty-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface3);
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s, transform .2s;
+      z-index: 200;
       white-space: nowrap;
     }
 
-    .swatch{
-      width: 12px;
-      height: 12px;
-      border-radius: 999px;
-      background: #aaa;
-      box-shadow: 0 0 0 4px rgba(0,0,0,.12);
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
     }
 
-    .highlight-row td{
-      background: rgba(124,92,255,.13);
+    @media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
     }
 
-    .footer-note{
+    .stat-box-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
       color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.35;
-      padding: 0 18px 16px;
+      margin-bottom: 6px;
     }
 
-    .sr-only{
-      position:absolute;
-      width:1px;
-      height:1px;
-      padding:0;
-      margin:-1px;
-      overflow:hidden;
-      clip:rect(0,0,0,0);
-      white-space:nowrap;
-      border-width:0;
+    .stat-box-val {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: var(--mono);
+      letter-spacing: -.02em;
     }
+
+    /* SEARCH */
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 9px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    .filter-select {
+      padding: 9px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      font-size: 11.5px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* SORT CHIPS */
+    .sort-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .sort-chip {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--muted2);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .sort-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .sort-chip:hover:not(.active) { border-color: var(--accent); color: var(--text); }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="title">
+  <div class="container">
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="brand">
+        <span class="brand-label">Saúde &amp; Bem-estar</span>
         <h1>Calculadora de IMC</h1>
-        <p class="subtitle">Informe sua <b>altura</b> e <b>peso</b> para descobrir o seu índice de massa corporal e a faixa correspondente.</p>
       </div>
-
-      <div class="theme-toggle">
-        <button class="toggle-btn" id="themeBtn" type="button" aria-label="Alternar tema">
-          <span class="icon" id="themeIcon">🌙</span>
-          <span class="toggle-label" id="themeText">Modo escuro</span>
-        </button>
+      <div class="top-actions">
+        <div class="relative">
+          <button class="icon-btn" id="viewUsersBtn" title="Ver resultados de todos os usuários">👥</button>
+          <span class="badge-count" id="usersBadge" style="display:none">0</span>
+        </div>
+        <button class="icon-btn" id="themeBtn" title="Alternar tema">🌙</button>
       </div>
-    </header>
+    </div>
 
-    <section class="grid">
+    <!-- STATS BAR -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-box">
+        <div class="stat-box-label">Registros</div>
+        <div class="stat-box-val" id="statTotal">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">IMC Médio</div>
+        <div class="stat-box-val" id="statAvg">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Menor IMC</div>
+        <div class="stat-box-val" id="statMin">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Maior IMC</div>
+        <div class="stat-box-val" id="statMax">—</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="grid-main">
+      <!-- FORM CARD -->
       <div class="card">
-        <div class="card-inner">
+        <div class="card-body">
+          <div class="section-label">Dados do usuário</div>
           <form id="bmiForm" autocomplete="off">
-            <div class="form-row">
-              <div>
-                <label for="height">
-                  <span>Altura (m)</span>
-                  <span aria-hidden="true">📏</span>
-                </label>
-                <input
-                  class="input"
-                  id="height"
-                  name="height"
-                  type="number"
-                  inputmode="decimal"
-                  step="0.01"
-                  min="0"
-                  placeholder="Ex: 1.75"
-                  required
-                />
+            <div class="form-grid">
+              <div class="field field-full name-field">
+                <label for="userName">Nome (opcional)</label>
+                <div class="input-wrap">
+                  <input type="text" id="userName" placeholder="Ex: João Silva" maxlength="40">
+                </div>
               </div>
-
-              <div>
-                <label for="weight">
-                  <span>Peso (kg)</span>
-                  <span aria-hidden="true">⚖️</span>
-                </label>
-                <input
-                  class="input"
-                  id="weight"
-                  name="weight"
-                  type="number"
-                  inputmode="decimal"
-                  step="0.1"
-                  min="0"
-                  placeholder="Ex: 72.5"
-                  required
-                />
+              <div class="field">
+                <label for="height">Altura</label>
+                <div class="input-wrap">
+                  <input type="number" id="height" step="0.01" min="0.5" max="2.5" placeholder="1.75">
+                  <span class="input-unit">m</span>
+                </div>
+              </div>
+              <div class="field">
+                <label for="weight">Peso</label>
+                <div class="input-wrap">
+                  <input type="number" id="weight" step="0.1" min="1" max="500" placeholder="72.5">
+                  <span class="input-unit">kg</span>
+                </div>
               </div>
             </div>
-
-            <div class="actions">
-              <button class="btn" type="submit">✨ Calcular IMC</button>
-              <button class="btn btn-ghost" type="button" id="clearBtn">Limpar</button>
+            <div class="btn-row">
+              <button class="btn-primary" type="submit">Calcular IMC</button>
+              <button class="btn-ghost" type="button" id="clearBtn">Limpar</button>
             </div>
-
-            <p class="helper">IMC = <b>peso</b> / (<b>altura</b> × <b>altura</b>). Valores inválidos serão ignorados.</p>
           </form>
+
+          <!-- TABLE -->
+          <div style="margin-top:24px;">
+            <div class="section-label">Classificação</div>
+            <div class="bmi-table-wrap">
+              <table class="bmi-table" id="bmiTable">
+                <thead>
+                  <tr>
+                    <th>Categoria</th>
+                    <th>IMC (kg/m²)</th>
+                    <th style="text-align:right">Risco</th>
+                  </tr>
+                </thead>
+                <tbody id="bmiTableBody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
-      <aside class="card">
-        <div class="result">
-          <div class="pill" id="typePill">
-            <span class="dot" id="typeDot" aria-hidden="true"></span>
-            <span id="typeName">—</span>
+      <!-- RESULT CARD -->
+      <div class="card">
+        <div class="result-body">
+          <div class="section-label">Resultado</div>
+
+          <div class="result-top">
+            <div class="bmi-display">
+              <div class="bmi-label">Índice de Massa Corporal</div>
+              <div class="bmi-value" id="bmiValue">—</div>
+            </div>
+            <div class="category-pill" id="catPill">
+              <span class="cat-dot" id="catDot"></span>
+              <span id="catName">—</span>
+            </div>
           </div>
 
-          <div class="score">
-            <h2>Seu IMC</h2>
-            <div class="value" id="bmiValue">—</div>
+          <!-- GAUGE -->
+          <div class="gauge-wrap" id="gaugeWrap">
+            <div class="gauge-bar-bg" id="gaugeBar">
+              <div class="gauge-seg" style="flex:1.85; background:var(--c-blue); opacity:.35"></div>
+              <div class="gauge-seg" style="flex:2.5; background:var(--c-green); opacity:.35"></div>
+              <div class="gauge-seg" style="flex:2.5; background:var(--c-yellow); opacity:.35"></div>
+              <div class="gauge-seg" style="flex:2.5; background:var(--c-orange); opacity:.35"></div>
+              <div class="gauge-seg" style="flex:2.5; background:var(--c-red); opacity:.35"></div>
+              <div class="gauge-seg" style="flex:2.5; background:var(--c-purple); opacity:.35"></div>
+            </div>
+            <div class="gauge-pointer" id="gaugePointer" style="left:50%;display:none"></div>
+            <div class="gauge-labels">
+              <span>10</span><span>18.5</span><span>25</span><span>30</span><span>35</span><span>40</span><span>50+</span>
+            </div>
           </div>
 
-          <div class="range" id="rangeInfo">
-            <div>Faixa: <b>—</b></div>
-            <div>Classificação: <b>—</b></div>
+          <div class="range-info">
+            <div class="range-box">
+              <div class="range-box-label">Faixa IMC</div>
+              <div class="range-box-val" id="rangeVal">—</div>
+            </div>
+            <div class="range-box">
+              <div class="range-box-label">Classificação</div>
+              <div class="range-box-val" id="classVal">—</div>
+            </div>
           </div>
+
+          <div class="range-info">
+            <div class="range-box">
+              <div class="range-box-label">Peso Ideal Mín.</div>
+              <div class="range-box-val" id="idealMin">—</div>
+            </div>
+            <div class="range-box">
+              <div class="range-box-label">Peso Ideal Máx.</div>
+              <div class="range-box-val" id="idealMax">—</div>
+            </div>
+          </div>
+
+          <p style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:auto;">
+            IMC = peso / (altura²). O IMC é um indicador geral e não substitui avaliação médica profissional.
+          </p>
         </div>
-      </aside>
-    </section>
-
-    <section class="card table-card">
-      <div class="card-inner">
-        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap;">
-          <div>
-            <h2 style="margin:0; font-size:18px; letter-spacing:-.01em;">Tabela do IMC</h2>
-            <p class="subtitle" style="margin-top:6px; max-width: 70ch;">Cada linha tem uma cor para ajudar na identificação rápida da classificação.</p>
-          </div>
-          <div class="pill" style="margin:0;">
-            <span class="dot" id="legendDot" style="background: var(--good); box-shadow: 0 0 0 4px rgba(38,194,129,.18);"></span>
-            <span>Legenda</span>
-          </div>
-        </div>
-
-        <table aria-label="Tabela de classificação do IMC">
-          <thead>
-            <tr>
-              <th style="width: 36%;">Tipo</th>
-              <th style="width: 27%;">IMC (kg/m²)</th>
-              <th style="width: 37%;">Descrição</th>
-            </tr>
-          </thead>
-          <tbody id="bmiTableBody"></tbody>
-        </table>
       </div>
-      <div class="footer-note">
-        <b>Observação:</b> IMC é um indicador geral e não substitui avaliação profissional.
-      </div>
-    </section>
+    </div>
+
+    <div class="footer-note">Dados salvos localmente no seu navegador · Todos os usuários compartilham os registros deste dispositivo</div>
   </div>
 
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Resultados dos Usuários</div>
+          <div class="modal-subtitle" id="modalSubtitle">0 registros salvos</div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost" id="clearAllBtn" style="padding:8px 14px;font-size:12px;">Limpar tudo</button>
+          <button class="icon-btn" id="closeModal" style="width:34px;height:34px;font-size:18px;" title="Fechar">✕</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="search-row">
+          <input type="text" class="search-input" id="searchInput" placeholder="Buscar por nome...">
+          <select class="filter-select" id="filterCat">
+            <option value="">Todas categorias</option>
+          </select>
+        </div>
+        <div class="sort-chips">
+          <button class="sort-chip active" data-sort="date">Mais recente</button>
+          <button class="sort-chip" data-sort="bmi-asc">Menor IMC</button>
+          <button class="sort-chip" data-sort="bmi-desc">Maior IMC</button>
+          <button class="sort-chip" data-sort="name">Nome A-Z</button>
+        </div>
+        <div class="users-grid" id="usersGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
   <script>
-    const THEMES = { dark: 'dark', light: 'light' };
+    const STORAGE_KEY = 'imc_registros_v2';
 
     const classifications = [
-      {
-        key: 'underweight',
-        name: 'Abaixo do peso',
-        min: 0,
-        max: 18.5,
-        color: '#7bbcff',
-        shadow: 'rgba(123,188,255,.25)',
-        description: 'IMC menor que 18,5 indica abaixo do peso.'
-      },
-      {
-        key: 'normal',
-        name: 'Peso normal',
-        min: 18.5,
-        max: 24.9,
-        color: '#26c281',
-        shadow: 'rgba(38,194,129,.22)',
-        description: 'IMC entre 18,5 e 24,9 é considerado normal.'
-      },
-      {
-        key: 'overweight',
-        name: 'Sobrepeso',
-        min: 25,
-        max: 29.9,
-        color: '#ffcc00',
-        shadow: 'rgba(255,204,0,.22)',
-        description: 'IMC entre 25 e 29,9 indica sobrepeso.'
-      },
-      {
-        key: 'obesity1',
-        name: 'Obesidade (Grau I)',
-        min: 30,
-        max: 34.9,
-        color: '#ff8a3d',
-        shadow: 'rgba(255,138,61,.22)',
-        description: 'IMC entre 30 e 34,9 indica obesidade grau I.'
-      },
-      {
-        key: 'obesity2',
-        name: 'Obesidade (Grau II)',
-        min: 35,
-        max: 39.9,
-        color: '#ff5c7a',
-        shadow: 'rgba(255,92,122,.22)',
-        description: 'IMC entre 35 e 39,9 indica obesidade grau II.'
-      },
-      {
-        key: 'obesity3',
-        name: 'Obesidade (Grau III)',
-        min: 40,
-        max: Infinity,
-        color: '#b23cff',
-        shadow: 'rgba(178,60,255,.22)',
-        description: 'IMC igual ou maior que 40 indica obesidade grau III.'
-      }
+      { key:'underweight', name:'Abaixo do peso', min:0,   max:18.5, color:'var(--c-blue)',   risk:'Baixo', riskText:'Abaixo do ideal' },
+      { key:'normal',      name:'Peso normal',    min:18.5, max:25,  color:'var(--c-green)',  risk:'Normal', riskText:'Saudável' },
+      { key:'overweight',  name:'Sobrepeso',      min:25,  max:30,   color:'var(--c-yellow)', risk:'Elevado', riskText:'Atenção' },
+      { key:'obesity1',    name:'Obesidade I',    min:30,  max:35,   color:'var(--c-orange)', risk:'Alto', riskText:'Alto' },
+      { key:'obesity2',    name:'Obesidade II',   min:35,  max:40,   color:'var(--c-red)',    risk:'Muito Alto', riskText:'Muito alto' },
+      { key:'obesity3',    name:'Obesidade III',  min:40,  max:Infinity, color:'var(--c-purple)', risk:'Grave', riskText:'Grave' },
     ];
 
-    const heightEl = document.getElementById('height');
-    const weightEl = document.getElementById('weight');
-    const formEl = document.getElementById('bmiForm');
-    const clearBtn = document.getElementById('clearBtn');
+    const hexColors = {
+      'var(--c-blue)': '#4f8ef7',
+      'var(--c-green)': '#2ec790',
+      'var(--c-yellow)': '#f5c147',
+      'var(--c-orange)': '#f47a3a',
+      'var(--c-red)': '#f05268',
+      'var(--c-purple)': '#b060f7',
+    };
 
-    const bmiValueEl = document.getElementById('bmiValue');
-    const typeNameEl = document.getElementById('typeName');
-    const typeDotEl = document.getElementById('typeDot');
-    const rangeInfoEl = document.getElementById('rangeInfo');
-
-    const themeBtn = document.getElementById('themeBtn');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeText = document.getElementById('themeText');
-
-    const tableBody = document.getElementById('bmiTableBody');
-
-    function formatRange(item){
-      const a = item.min;
-      const b = item.max;
-      if (b === Infinity) return `${a.toFixed(0)}+`;
-      if (a === 0) return `< ${b.toFixed(1)}`;
-      return `${a.toFixed(1)} - ${b.toFixed(1)}`;
-    }
-
-    function getClassification(bmi){
+    function getClassification(bmi) {
       return classifications.find(c => bmi >= c.min && bmi < c.max) || null;
     }
 
-    function renderTable(){
-      tableBody.innerHTML = '';
-      for (const item of classifications){
+    function formatRange(item) {
+      if (item.max === Infinity) return `≥ ${item.min}`;
+      if (item.min === 0) return `< ${item.max}`;
+      return `${item.min} – ${item.max}`;
+    }
+
+    function calcBMI(h, w) {
+      if (!isFinite(h) || !isFinite(w) || h <= 0 || w <= 0) return null;
+      const bmi = w / (h * h);
+      return isFinite(bmi) ? bmi : null;
+    }
+
+    function fmt(n, d = 1) {
+      return n.toFixed(d).replace('.', ',');
+    }
+
+    // STORAGE
+    function loadRecords() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch { return []; }
+    }
+
+    function saveRecords(records) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    function addRecord(entry) {
+      const records = loadRecords();
+      records.unshift(entry);
+      saveRecords(records);
+      return records;
+    }
+
+    function deleteRecord(id) {
+      const records = loadRecords().filter(r => r.id !== id);
+      saveRecords(records);
+      return records;
+    }
+
+    function clearAllRecords() {
+      localStorage.removeItem(STORAGE_KEY);
+      return [];
+    }
+
+    // TABLE
+    function renderTable() {
+      const tbody = document.getElementById('bmiTableBody');
+      tbody.innerHTML = '';
+      classifications.forEach(item => {
         const tr = document.createElement('tr');
-        tr.dataset.type = item.key;
-
-        const tdType = document.createElement('td');
-        tdType.innerHTML = `
-          <span class="badge">
-            <span class="swatch" style="background:${item.color}; box-shadow: 0 0 0 4px ${item.shadow};"></span>
-            ${item.name}
-          </span>`;
-
-        const tdRange = document.createElement('td');
-        tdRange.textContent = formatRange(item);
-
-        const tdDesc = document.createElement('td');
-        tdDesc.textContent = item.description;
-
-        tr.appendChild(tdType);
-        tr.appendChild(tdRange);
-        tr.appendChild(tdDesc);
-        tableBody.appendChild(tr);
-      }
+        tr.dataset.key = item.key;
+        tr.innerHTML = `
+          <td><div class="type-cell"><span class="color-swatch" style="background:${item.color}"></span>${item.name}</div></td>
+          <td class="imc-range">${formatRange(item)}</td>
+          <td style="text-align:right;font-size:12px;color:var(--muted2)">${item.riskText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
 
-    function setTheme(theme){
-      document.documentElement.setAttribute('data-theme', theme);
-      const isLight = theme === THEMES.light;
-      themeIcon.textContent = isLight ? '☀️' : '🌙';
-      themeText.textContent = isLight ? 'Modo claro' : 'Modo escuro';
-      localStorage.setItem('theme', theme);
+    // RESULT
+    let currentBMI = null;
+    let currentHeight = null;
+
+    function clearResult() {
+      document.getElementById('bmiValue').textContent = '—';
+      document.getElementById('bmiValue').style.color = 'var(--text)';
+      document.getElementById('catName').textContent = '—';
+      document.getElementById('catDot').style.background = 'var(--muted)';
+      document.getElementById('rangeVal').textContent = '—';
+      document.getElementById('classVal').textContent = '—';
+      document.getElementById('idealMin').textContent = '—';
+      document.getElementById('idealMax').textContent = '—';
+      document.getElementById('gaugePointer').style.display = 'none';
+      document.querySelectorAll('.bmi-table tbody tr').forEach(r => r.classList.remove('row-active'));
+      currentBMI = null;
+      currentHeight = null;
     }
 
-    function toggleTheme(){
-      const current = document.documentElement.getAttribute('data-theme') || THEMES.dark;
-      setTheme(current === THEMES.dark ? THEMES.light : THEMES.dark);
-    }
-
-    function clearResult(){
-      bmiValueEl.textContent = '—';
-      typeNameEl.textContent = '—';
-      typeDotEl.style.background = 'var(--good)';
-      typeDotEl.style.boxShadow = '0 0 0 4px rgba(38,194,129,.18)';
-      rangeInfoEl.innerHTML = `
-        <div>Faixa: <b>—</b></div>
-        <div>Classificação: <b>—</b></div>
-      `;
-      for (const tr of tableBody.querySelectorAll('tr')){
-        tr.classList.remove('highlight-row');
-      }
-    }
-
-    function updateResult(bmi){
+    function updateResult(bmi, height) {
       const item = getClassification(bmi);
       if (!item) return;
+      currentBMI = bmi;
+      currentHeight = height;
 
-      const rounded = Math.round(bmi * 10) / 10;
-      bmiValueEl.textContent = rounded.toString().replace('.', ',');
-      typeNameEl.textContent = item.name;
+      document.getElementById('bmiValue').textContent = fmt(bmi, 1);
+      document.getElementById('bmiValue').style.color = item.color;
+      document.getElementById('catName').textContent = item.name;
+      document.getElementById('catDot').style.background = item.color;
+      document.getElementById('rangeVal').textContent = formatRange(item);
+      document.getElementById('classVal').textContent = item.risk;
 
-      typeDotEl.style.background = item.color;
-      typeDotEl.style.boxShadow = `0 0 0 4px ${item.shadow}`;
+      const idealMin = 18.5 * height * height;
+      const idealMax = 24.9 * height * height;
+      document.getElementById('idealMin').textContent = fmt(idealMin, 1) + ' kg';
+      document.getElementById('idealMax').textContent = fmt(idealMax, 1) + ' kg';
 
-      rangeInfoEl.innerHTML = `
-        <div>Faixa: <b>${formatRange(item).replace('+', '+')}</b></div>
-        <div>Classificação: <b>${item.key.replace(/\d/g,' $&').replace(/obesity\s*/i,'Obesidade ').trim()}</b></div>
-      `;
+      // gauge pointer
+      const clamped = Math.min(Math.max(bmi, 10), 50);
+      const pct = ((clamped - 10) / 40) * 100;
+      const ptr = document.getElementById('gaugePointer');
+      ptr.style.display = 'block';
+      ptr.style.left = pct + '%';
+      ptr.style.background = item.color;
 
-      for (const tr of tableBody.querySelectorAll('tr')){
-        tr.classList.toggle('highlight-row', tr.dataset.type === item.key);
+      document.querySelectorAll('.bmi-table tbody tr').forEach(r => {
+        r.classList.toggle('row-active', r.dataset.key === item.key);
+      });
+    }
+
+    // STATS BAR
+    function updateStats() {
+      const records = loadRecords();
+      const n = records.length;
+      document.getElementById('statTotal').textContent = n;
+      if (n === 0) {
+        document.getElementById('statAvg').textContent = '—';
+        document.getElementById('statMin').textContent = '—';
+        document.getElementById('statMax').textContent = '—';
+      } else {
+        const bmis = records.map(r => r.bmi);
+        const avg = bmis.reduce((a,b) => a+b, 0) / n;
+        document.getElementById('statAvg').textContent = fmt(avg);
+        document.getElementById('statMin').textContent = fmt(Math.min(...bmis));
+        document.getElementById('statMax').textContent = fmt(Math.max(...bmis));
+      }
+      const badge = document.getElementById('usersBadge');
+      if (n > 0) {
+        badge.style.display = 'grid';
+        badge.textContent = n > 99 ? '99+' : n;
+      } else {
+        badge.style.display = 'none';
       }
     }
 
-    function computeBMI(height, weight){
-      // height in meters, weight in kg
-      if (!Number.isFinite(height) || !Number.isFinite(weight)) return null;
-      if (height <= 0 || weight <= 0) return null;
-      const bmi = weight / (height * height);
-      return Number.isFinite(bmi) ? bmi : null;
+    // MODAL
+    let currentSort = 'date';
+    let currentSearch = '';
+    let currentFilter = '';
+
+    function getInitials(name) {
+      if (!name || !name.trim()) return '?';
+      return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
     }
 
-    formEl.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const height = parseFloat(heightEl.value.replace(',', '.'));
-      const weight = parseFloat(weightEl.value.replace(',', '.'));
-      const bmi = computeBMI(height, weight);
+    function renderModal() {
+      let records = loadRecords();
+      document.getElementById('modalSubtitle').textContent = `${records.length} registro${records.length !== 1 ? 's' : ''} salvos`;
 
-      if (bmi === null){
-        clearResult();
+      // Filter options
+      const cats = [...new Set(records.map(r => r.catName))];
+      const sel = document.getElementById('filterCat');
+      const selVal = sel.value;
+      sel.innerHTML = '<option value="">Todas categorias</option>';
+      cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+      sel.value = selVal;
+
+      // Search
+      if (currentSearch) records = records.filter(r => (r.name || 'Usuário anônimo').toLowerCase().includes(currentSearch.toLowerCase()));
+      if (currentFilter) records = records.filter(r => r.catName === currentFilter);
+
+      // Sort
+      if (currentSort === 'date') records.sort((a,b) => b.timestamp - a.timestamp);
+      else if (currentSort === 'bmi-asc') records.sort((a,b) => a.bmi - b.bmi);
+      else if (currentSort === 'bmi-desc') records.sort((a,b) => b.bmi - a.bmi);
+      else if (currentSort === 'name') records.sort((a,b) => (a.name||'').localeCompare(b.name||''));
+
+      const grid = document.getElementById('usersGrid');
+      if (records.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">📋</div>
+          <div>Nenhum registro encontrado.</div>
+          <div style="margin-top:6px;font-size:12px;">Calcule um IMC para salvar os dados.</div>
+        </div>`;
         return;
       }
-      updateResult(bmi);
+
+      grid.innerHTML = '';
+      records.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.style.setProperty('--accent-color', r.color || 'var(--c-green)');
+        card.style.borderTop = `3px solid ${r.color || 'var(--c-green)'}`;
+
+        const date = new Date(r.timestamp);
+        const dateStr = date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+        const displayName = r.name && r.name.trim() ? r.name.trim() : 'Anônimo';
+
+        card.innerHTML = `
+          <button class="user-delete" data-id="${r.id}" title="Remover registro">✕</button>
+          <div class="user-name">
+            <div class="user-avatar">${getInitials(r.name)}</div>
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${displayName}</span>
+          </div>
+          <div class="user-stats">
+            <div class="user-stat">
+              <div class="user-stat-label">IMC</div>
+              <div class="user-stat-val" style="color:${r.color}">${fmt(r.bmi)}</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-label">Peso</div>
+              <div class="user-stat-val">${fmt(r.weight, 1)} kg</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-label">Altura</div>
+              <div class="user-stat-val">${fmt(r.height, 2)} m</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-label">Risco</div>
+              <div class="user-stat-val" style="font-size:11px;color:${r.color}">${r.risk}</div>
+            </div>
+          </div>
+          <div class="user-cat">
+            <span class="color-swatch" style="width:8px;height:8px;background:${r.color}"></span>
+            ${r.catName}
+          </div>
+          <div class="user-date">${dateStr}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // TOAST
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // THEME
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'light' ? '☀️' : '🌙';
+      localStorage.setItem('imc_theme', theme);
+    }
+
+    // EVENTS
+    document.getElementById('bmiForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const h = parseFloat(document.getElementById('height').value.replace(',', '.'));
+      const w = parseFloat(document.getElementById('weight').value.replace(',', '.'));
+      const bmi = calcBMI(h, w);
+      if (bmi === null) { showToast('⚠️ Valores inválidos'); clearResult(); return; }
+
+      updateResult(bmi, h);
+
+      const item = getClassification(bmi);
+      const name = document.getElementById('userName').value.trim();
+      const record = {
+        id: Date.now() + Math.random().toString(36).slice(2),
+        name,
+        height: h,
+        weight: w,
+        bmi,
+        catName: item.name,
+        catKey: item.key,
+        risk: item.risk,
+        color: hexColors[item.color] || item.color,
+        timestamp: Date.now(),
+      };
+
+      addRecord(record);
+      updateStats();
+      showToast('✅ IMC calculado e salvo!');
     });
 
-    clearBtn.addEventListener('click', () => {
-      heightEl.value = '';
-      weightEl.value = '';
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.getElementById('height').value = '';
+      document.getElementById('weight').value = '';
+      document.getElementById('userName').value = '';
       clearResult();
-      heightEl.focus();
     });
 
-    themeBtn.addEventListener('click', toggleTheme);
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      setTheme(cur === 'dark' ? 'light' : 'dark');
+    });
 
-    // Init
+    document.getElementById('viewUsersBtn').addEventListener('click', () => {
+      renderModal();
+      document.getElementById('modalOverlay').classList.add('open');
+    });
+
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('modalOverlay').classList.remove('open');
+    });
+
+    document.getElementById('modalOverlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('modalOverlay')) {
+        document.getElementById('modalOverlay').classList.remove('open');
+      }
+    });
+
+    document.getElementById('clearAllBtn').addEventListener('click', () => {
+      if (!confirm('Tem certeza que deseja apagar todos os registros? Esta ação não pode ser desfeita.')) return;
+      clearAllRecords();
+      updateStats();
+      renderModal();
+      showToast('🗑️ Todos os registros apagados');
+    });
+
+    document.getElementById('usersGrid').addEventListener('click', e => {
+      const btn = e.target.closest('.user-delete');
+      if (!btn) return;
+      deleteRecord(btn.dataset.id);
+      updateStats();
+      renderModal();
+      showToast('🗑️ Registro removido');
+    });
+
+    document.getElementById('searchInput').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      renderModal();
+    });
+
+    document.getElementById('filterCat').addEventListener('change', e => {
+      currentFilter = e.target.value;
+      renderModal();
+    });
+
+    document.querySelectorAll('.sort-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.sort-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentSort = chip.dataset.sort;
+        renderModal();
+      });
+    });
+
+    // INIT
     renderTable();
-
-    const savedTheme = localStorage.getItem('theme');
-    const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-    const initial = savedTheme ? savedTheme : (prefersLight ? THEMES.light : THEMES.dark);
-    setTheme(initial);
-
+    updateStats();
     clearResult();
+
+    const savedTheme = localStorage.getItem('imc_theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    setTheme(savedTheme || (prefersLight ? 'light' : 'dark'));
   </script>
 </body>
 </html>
-
