@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de IMC</title>
+    <style>
+        :root {
+            --primary: #1976d2;
+            --primary-dark: #1565c0;
+            --background: #f4f4f4;
+            --container-bg: #fff;
+            --text: #222;
+            --border: #ccc;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container {
+            background: var(--container-bg);
+            padding: 32px 36px 24px 36px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            min-width: 340px;
+            margin-top: 48px;
+            margin-bottom: 32px;
+            transition: background 0.3s, color 0.3s;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 16px;
+            background: #fafafa;
+            transition: border 0.2s;
+        }
+        input[type="number"]:focus {
+            border: 1.5px solid var(--primary);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: var(--primary-dark);
+        }
+        .resultado {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 500;
+            min-height: 28px;
+        }
+        .tabela-imc {
+            width: 100%;
+            max-width: 480px;
+            border-collapse: collapse;
+            margin: 0 auto 32px auto;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .tabela-imc th, .tabela-imc td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+        .tabela-imc th {
+            background: var(--primary);
+            color: #fff;
+            font-size: 16px;
+        }
+        .tabela-imc tr {
+            transition: background 0.2s;
+        }
+        .imc-abaixo { background: #b3e5fc; color: #01579b; }
+        .imc-normal { background: #c8e6c9; color: #256029; }
+        .imc-sobrepeso { background: #fff9c4; color: #b59f00; }
+        .imc-obesidade1 { background: #ffe0b2; color: #e65100; }
+        .imc-obesidade2 { background: #ffccbc; color: #bf360c; }
+        .imc-obesidade3 { background: #ffcdd2; color: #b71c1c; }
+        .modo-escuro {
+            --primary: #90caf9;
+            --primary-dark: #1976d2;
+            --background: #181c24;
+            --container-bg: #232a36;
+            --text: #f4f4f4;
+            --border: #444;
+        }
+        .modo-escuro .tabela-imc th {
+            background: #1976d2;
+            color: #fff;
+        }
+        .modo-escuro input[type="number"] {
+            background: #232a36;
+            color: #f4f4f4;
+        }
+        .modo-escuro .tabela-imc td {
+            color: inherit;
+        }
+        .toggle-modo {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 7px 18px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .toggle-modo:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        @media (max-width: 600px) {
+            .container {
+                min-width: unset;
+                width: 96vw;
+                padding: 18px 6vw 18px 6vw;
+            }
+            .tabela-imc {
+                font-size: 13px;
+            }
+            .toggle-modo {
+                right: 10px;
+                top: 10px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-modo" id="toggleModo">Modo Escuro</button>
+    <div class="container">
+        <h2>Calculadora de IMC</h2>
+        <form id="formIMC" autocomplete="off">
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso" step="0.1" min="0" required>
+
+            <label for="altura">Altura (m):</label>
+            <input type="number" id="altura" step="0.01" min="0" required>
+
+            <button type="submit">Calcular IMC</button>
+        </form>
+        <div class="resultado" id="resultado"></div>
+    </div>
+    <table class="tabela-imc">
+        <thead>
+            <tr>
+                <th>IMC</th>
+                <th>Classificação</th>
+                <th>Cor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="imc-abaixo">
+                <td>Menor que 18,5</td>
+                <td>Abaixo do peso</td>
+                <td>Azul claro</td>
+            </tr>
+            <tr class="imc-normal">
+                <td>18,5 - 24,9</td>
+                <td>Peso normal</td>
+                <td>Verde claro</td>
+            </tr>
+            <tr class="imc-sobrepeso">
+                <td>25 - 29,9</td>
+                <td>Sobrepeso</td>
+                <td>Amarelo claro</td>
+            </tr>
+            <tr class="imc-obesidade1">
+                <td>30 - 34,9</td>
+                <td>Obesidade grau I</td>
+                <td>Laranja claro</td>
+            </tr>
+            <tr class="imc-obesidade2">
+                <td>35 - 39,9</td>
+                <td>Obesidade grau II</td>
+                <td>Laranja escuro</td>
+            </tr>
+            <tr class="imc-obesidade3">
+                <td>40 ou mais</td>
+                <td>Obesidade grau III</td>
+                <td>Vermelho claro</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        function getClassByIMC(imc) {
+            if (imc < 18.5) return 'imc-abaixo';
+            if (imc < 25) return 'imc-normal';
+            if (imc < 30) return 'imc-sobrepeso';
+            if (imc < 35) return 'imc-obesidade1';
+            if (imc < 40) return 'imc-obesidade2';
+            return 'imc-obesidade3';
+        }
+
+        document.getElementById('formIMC').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const resultado = document.getElementById('resultado');
+
+            if (isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+                resultado.textContent = 'Por favor, preencha os campos corretamente.';
+                resultado.style.color = 'red';
+                resultado.className = 'resultado';
+                return;
+            }
+
+            const imc = peso / (altura * altura);
+            let classificacao = '';
+            let classe = '';
+
+            if (imc < 18.5) {
+                classificacao = 'Abaixo do peso';
+                classe = 'imc-abaixo';
+            } else if (imc < 25) {
+                classificacao = 'Peso normal';
+                classe = 'imc-normal';
+            } else if (imc < 30) {
+                classificacao = 'Sobrepeso';
+                classe = 'imc-sobrepeso';
+            } else if (imc < 35) {
+                classificacao = 'Obesidade grau I';
+                classe = 'imc-obesidade1';
+            } else if (imc < 40) {
+                classificacao = 'Obesidade grau II';
+                classe = 'imc-obesidade2';
+            } else {
+                classificacao = 'Obesidade grau III';
+                classe = 'imc-obesidade3';
+            }
+
+            resultado.textContent = `Seu IMC é ${imc.toFixed(2)} (${classificacao})`;
+            resultado.className = `resultado ${classe}`;
+            resultado.style.color = '';
+        });
+
+        // Modo escuro/claro
+        const btnModo = document.getElementById('toggleModo');
+        btnModo.addEventListener('click', function() {
+            document.body.classList.toggle('modo-escuro');
+            if(document.body.classList.contains('modo-escuro')) {
+                btnModo.textContent = 'Modo Claro';
+            } else {
+                btnModo.textContent = 'Modo Escuro';
+            }
+        });
+    </script>
+</body>
+</html>
